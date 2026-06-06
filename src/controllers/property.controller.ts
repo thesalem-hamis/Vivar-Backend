@@ -8,11 +8,11 @@ export class PropertyController {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const id = Array.isArray(req.params.id)
-        ? req.params.id[0]
-        : req.params.id;
+      const id = req.params.id as string;
       const property = await propertyService.getById(id);
-      await propertyService.incrementViews(id);
+      propertyService
+        .incrementViews(id)
+        .catch((err) => console.error("View increment failed", err));
       res.json({ success: true, data: property });
     } catch (err) {
       next(err);
@@ -35,7 +35,7 @@ export class PropertyController {
 
   async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const property = await propertyService.create(req.user!.sub, req.body);
+      const property = await propertyService.create(req.body);
       res.status(201).json({ success: true, data: property });
     } catch (err) {
       next(err);
@@ -44,25 +44,18 @@ export class PropertyController {
 
   async update(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const id = Array.isArray(req.params.id)
-        ? req.params.id[0]
-        : req.params.id;
-      const property = await propertyService.update(
-        id,
-        req.user!.sub,
-        req.body,
-      );
+      const id = req.params.id as string;
+      const property = await propertyService.update(id, req.body);
       res.json({ success: true, data: property });
     } catch (err) {
       next(err);
     }
   }
+
   async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const id = Array.isArray(req.params.id)
-        ? req.params.id[0]
-        : req.params.id;
-      await propertyService.delete(id, req.user!.sub);
+      const id = req.params.id as string;
+      await propertyService.delete(id);
       res.json({ success: true, message: "Property deleted successfully" });
     } catch (err) {
       next(err);

@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password_hash String
+  name          String?
+  googleId      String    @unique
+  avatarUrl     String?
+  lastLogin     DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+}
+
+model Property {
+  id              String   @id @default(uuid())
+  title           String
+  location        String
+  type            String
+  priceNaira      Decimal
+  priceUsd        Decimal?
+  status          String   @default("active")
+  bedrooms        Int?
+  bathrooms       Int?
+  floorAreaSqm    Float?
+  description     String
+  isVerified      Boolean  @default(true)
+  amenities       String[]
+  is_furnished    Boolean  @default(false)
+  is_active       Boolean  @default(true)
+  is_featured     Boolean  @default(false)
+  address         PropertyAddress?
+  views_count     Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model PropertyAddress {
+  id          String   @id @default(uuid())
+  property_id String   @unique
+  property    Property @relation(fields: [property_id], references: [id])
+  street      String
+  city        String
+  state       String
+  zip_code    String?
+  country     String
+}
+
+model Lead {
+  id            String   @id @default(uuid())
+  fullName      String
+  email         String
+  phone         String
+  leadType      String 
+  status        String   @default("NEW")
+  budgetRange   String?
+  timeline      String?
+  notes         String?
+  createdAt     DateTime @default(now())
+}
+
+model Insight {
+  id            String   @id @default(uuid())
+  title         String
+  slug          String   @unique
+  category      String
+  content       String
+  excerpt       String
+  publishedAt   DateTime @default(now())
+  targetKeyword String?
+}

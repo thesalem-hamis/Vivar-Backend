@@ -1,10 +1,9 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { v4 as uuidv4 } from "uuid";
-import { db } from "../../config/database";
+import { prisma } from "../../config/database"; // Import your Prisma singleton
 import { redisClient } from "../../config/redis";
 import { env } from "../../config/env";
-import { User, JwtPayload, UserRole } from "../../types";
+import { JwtPayload, UserRole } from "../../types";
 import { AppError } from "../../utils/AppError";
 
 const BCRYPT_ROUNDS = 12;
@@ -18,47 +17,43 @@ interface AuthTokens {
 interface RegisterDto {
   email: string;
   password: string;
-  first_name: string;
-  last_name: string;
-  phone?: string;
-  role?: UserRole;
+  name: string;
+  code: string;
 }
 
 export class AuthService {
   async register(dto: RegisterDto): Promise<AuthTokens> {
-    const { rows: existing } = await db.query(
-      "SELECT id FROM users WHERE email = $1",
-      [dto.email.toLowerCase()],
-    );
-    if (existing[0]) throw new AppError("Email already in use", 409);
+    if (dto.code !== env.REGISTRATION_CODE) {
+      throw new AppError("Invalid registration code", 403);
+    }
+
+    const existingUser = await prisma.user.findUnique({
+      where: { email: dto.email.toLowerCase() },
+    });
+
+    if (existingUser) throw new AppError("Email already in use", 409);
 
     const password_hash = await bcrypt.hash(dto.password, BCRYPT_ROUNDS);
 
-    const { rows } = await db.query<User>(
-      `INSERT INTO users (id, email, password_hash, first_name, last_name, phone, role)
-       VALUES ($1,$2,$3,$4,$5,$6,$7)
-       RETURNING *`,
-      [
-        uuidv4(),
-        dto.email.toLowerCase(),
+    const user = await prisma.user.create({
+      data: {
+        email: dto.email.toLowerCase(),
         password_hash,
-        dto.first_name,
-        dto.last_name,
-        dto.phone,
-        dto.role ?? UserRole.BUYER,
-      ],
-    );
+        googleId: "",
+        name: dto.name,
+      },
+    });
 
-    return this.issueTokens(rows[0]);
+    return this.issueTokens(user);
   }
 
   async login(email: string, password: string): Promise<AuthTokens> {
-    const { rows } = await db.query<User>(
-      "SELECT * FROM users WHERE email = $1 AND is_active = TRUE",
-      [email.toLowerCase()],
-    );
-
-    const user = rows[0];
+    const user = await prisma.user.findFirst({
+      where: {
+        email: email.toLowerCase(),
+        is_active: true,
+      },
+    });
 
     const passwordMatch = user
       ? await bcrypt.compare(password, user.password_hash)
@@ -84,19 +79,20 @@ export class AuthService {
       throw new AppError("Refresh token revoked or reused", 401);
     }
 
-    const { rows } = await db.query<User>("SELECT * FROM users WHERE id = $1", [
-      payload.sub,
-    ]);
-    if (!rows[0]) throw new AppError("User not found", 404);
+    const user = await prisma.user.findUnique({
+      where: { id: payload.sub },
+    });
 
-    return this.issueTokens(rows[0]);
+    if (!user) throw new AppError("User not found", 404);
+
+    return this.issueTokens(user);
   }
 
   async logout(userId: string): Promise<void> {
     await redisClient.del(`refresh_token:${userId}`);
   }
 
-  private async issueTokens(user: User): Promise<AuthTokens> {
+  private async issueTokens(user: any): Promise<AuthTokens> {
     const payload: JwtPayload = {
       sub: user.id,
       email: user.email,

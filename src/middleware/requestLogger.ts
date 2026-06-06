@@ -16,7 +16,7 @@ export function requestLogger(
       path: req.originalUrl,
       status: res.statusCode,
       duration_ms: Date.now() - start,
-      user_id: req.user?.sub ?? "anonymous",
+      // user_id: req.user?.sub ?? "anonymous",
     });
   });
 

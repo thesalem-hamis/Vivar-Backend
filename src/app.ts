@@ -1,7 +1,13 @@
+import "dotenv/config";
+
 import express, { Application } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import swaggerUi from "swagger-ui-express";
+import { readFileSync } from "fs";
+import { join } from "path";
+import apiRoutes from "../src/routes/index";
 import { rateLimiter } from "../src/middleware/rateLimiter";
 import { errorHandler } from "../src/middleware/errorHandler";
 import { notFound } from "../src/middleware/notFound";
@@ -18,11 +24,17 @@ app.use(morgan("combined"));
 app.use(requestLogger);
 app.use(rateLimiter);
 
+const swaggerDocument = JSON.parse(
+  readFileSync(join(process.cwd(), "./src/swagger-output.json"), "utf8"),
+);
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.get("/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-const API = "/api/v1";
+app.use("/api/v1", apiRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
