@@ -1,0 +1,86 @@
+21:48:54 [[32minfo[39m] ✅ PostgreSQL connected
+21:48:54 [[31merror[39m] Redis client error: {"code":"ECONNREFUSED","stack":"AggregateError\n    at internalConnectMultiple (node:net:1134:18)\n    at afterConnectMultiple (node:net:1715:7)"}
+21:48:55 [[33mwarn[39m] Redis reconnecting...
+21:48:55 [[31merror[39m] Redis client error: {"code":"ECONNREFUSED","stack":"AggregateError\n    at internalConnectMultiple (node:net:1134:18)\n    at afterConnectMultiple (node:net:1715:7)"}
+21:48:55 [[33mwarn[39m] Redis reconnecting...
+21:48:55 [[31merror[39m] Redis client error: {"code":"ECONNREFUSED","stack":"AggregateError\n    at internalConnectMultiple (node:net:1134:18)\n    at afterConnectMultiple (node:net:1715:7)"}
+21:48:55 [[33mwarn[39m] Redis reconnecting...
+21:48:55 [[31merror[39m] Redis client error: {"code":"ECONNREFUSED","stack":"AggregateError\n    at internalConnectMultiple (node:net:1134:18)\n    at afterConnectMultiple (node:net:1715:7)"}
+21:48:55 [[33mwarn[39m] Redis reconnecting...
+21:48:55 [[31merror[39m] Redis client error: {"code":"ECONNREFUSED","stack":"AggregateError\n    at internalConnectMultiple (node:net:1134:18)\n    at afterConnectMultiple (node:net:1715:7)"}
+21:48:56 [[33mwarn[39m] Redis reconnecting...
+21:48:56 [[31merror[39m] Redis client error: {"code":"ECONNREFUSED","stack":"AggregateError\n    at internalConnectMultiple (node:net:1134:18)\n    at afterConnectMultiple (node:net:1715:7)"}
+21:48:56 [[33mwarn[39m] Redis reconnecting...
+21:48:56 [[31merror[39m] Redis client error: {"code":"ECONNREFUSED","stack":"AggregateError\n    at internalConnectMultiple (node:net:1134:18)\n    at afterConnectMultiple (node:net:1715:7)"}
+21:48:57 [[33mwarn[39m] Redis reconnecting...
+21:48:57 [[31merror[39m] Redis client error: {"code":"ECONNREFUSED","stack":"AggregateError\n    at internalConnectMultiple (node:net:1134:18)\n    at afterConnectMultiple (node:net:1715:7)"}
+21:48:57 [[33mwarn[39m] Redis reconnecting...
+21:48:57 [[31merror[39m] Redis client error: {"code":"ECONNREFUSED","stack":"AggregateError\n    at internalConnectMultiple (node:net:1134:18)\n    at afterConnectMultiple (node:net:1715:7)"}
+21:48:58 [[33mwarn[39m] Redis reconnecting...
+21:48:58 [[31merror[39m] Redis client error: {"code":"ECONNREFUSED","stack":"AggregateError\n    at internalConnectMultiple (node:net:1134:18)\n    at afterConnectMultiple (node:net:1715:7)"}
+21:48:59 [[33mwarn[39m] Redis reconnecting...
+21:48:59 [[31merror[39m] Redis client error: {"code":"ECONNREFUSED","stack":"AggregateError\n    at internalConnectMultiple (node:net:1134:18)\n    at afterConnectMultiple (node:net:1715:7)"}
+21:49:00 [[33mwarn[39m] Redis reconnecting...
+21:49:00 [[31merror[39m] Redis client error: {"code":"ECONNREFUSED","stack":"AggregateError\n    at internalConnectMultiple (node:net:1134:18)\n    at afterConnectMultiple (node:net:1715:7)"}
+21:49:01 [[33mwarn[39m] Redis reconnecting...
+21:49:01 [[31merror[39m] Redis client error: {"code":"ECONNREFUSED","stack":"AggregateError\n    at internalConnectMultiple (node:net:1134:18)\n    at afterConnectMultiple (node:net:1715:7)"}
+21:49:02 [[33mwarn[39m] Redis reconnecting...
+21:49:02 [[31merror[39m] Redis client error: {"code":"ECONNREFUSED","stack":"AggregateError\n    at internalConnectMultiple (node:net:1134:18)\n    at afterConnectMultiple (node:net:1715:7)"}
+21:49:04 [[33mwarn[39m] Redis reconnecting...
+21:49:04 [[31merror[39m] Redis client error: {"code":"ECONNREFUSED","stack":"AggregateError\n    at internalConnectMultiple (node:net:1134:18)\n    at afterConnectMultiple (node:net:1715:7)"}
+21:49:05 [[33mwarn[39m] Redis reconnecting...
+21:49:05 [[31merror[39m] Redis client error: {"code":"ECONNREFUSED","stack":"AggregateError\n    at internalConnectMultiple (node:net:1134:18)\n    at afterConnectMultiple (node:net:1715:7)"}
+21:57:54 [[32minfo[39m] ✅ PostgreSQL connected
+21:58:49 [[32minfo[39m] ✅ Redis connected
+21:58:49 [[32minfo[39m] 🚀 Server running on http://localhost:3000 [development]
+22:05:14 [[32minfo[39m] ✅ PostgreSQL connected
+22:05:14 [[32minfo[39m] ✅ Redis connected
+22:05:14 [[32minfo[39m] 🚀 Server running on http://localhost:3000 [development]
+22:06:08 [[32minfo[39m] ✅ PostgreSQL connected
+22:06:09 [[32minfo[39m] ✅ Redis connected
+22:06:09 [[32minfo[39m] 🚀 Server running on http://localhost:3000 [development]
+22:20:26 [[32minfo[39m] ✅ PostgreSQL connected
+22:20:27 [[32minfo[39m] ✅ Redis connected
+22:20:27 [[32minfo[39m] 🚀 Server running on http://localhost:3000 [development]
+23:13:46 [[32minfo[39m] ✅ PostgreSQL connected
+23:13:47 [[32minfo[39m] ✅ Redis connected
+23:13:47 [[32minfo[39m] 🚀 Server running on http://localhost:3000 [development]
+23:13:51 [[32minfo[39m] HTTP request {"method":"GET","path":"/","status":404,"duration_ms":38}
+23:13:51 [[32minfo[39m] HTTP request {"method":"GET","path":"/favicon.ico","status":404,"duration_ms":19}
+23:14:20 [[32minfo[39m] HTTP request {"method":"GET","path":"/docs","status":301,"duration_ms":11}
+23:14:20 [[32minfo[39m] HTTP request {"method":"GET","path":"/docs/","status":200,"duration_ms":5}
+23:14:21 [[32minfo[39m] HTTP request {"method":"GET","path":"/docs/swagger-ui.css","status":200,"duration_ms":27}
+23:14:21 [[32minfo[39m] HTTP request {"method":"GET","path":"/docs/swagger-ui-init.js","status":200,"duration_ms":2}
+23:14:21 [[32minfo[39m] HTTP request {"method":"GET","path":"/docs/swagger-ui-standalone-preset.js","status":200,"duration_ms":51}
+23:14:21 [[32minfo[39m] HTTP request {"method":"GET","path":"/docs/swagger-ui-bundle.js","status":200,"duration_ms":91}
+23:14:21 [[32minfo[39m] HTTP request {"method":"GET","path":"/docs/favicon-32x32.png","status":200,"duration_ms":3}
+23:14:55 [[32minfo[39m] ✅ PostgreSQL connected
+23:14:55 [[32minfo[39m] ✅ Redis connected
+23:14:55 [[32minfo[39m] 🚀 Server running on http://localhost:3000 [development]
+23:15:00 [[32minfo[39m] HTTP request {"method":"GET","path":"/docs/favicon-32x32.png","status":304,"duration_ms":15}
+23:15:43 [[32minfo[39m] HTTP request {"method":"POST","path":"/auth/register","status":404,"duration_ms":8}
+23:17:59 [[32minfo[39m] ✅ PostgreSQL connected
+23:18:00 [[32minfo[39m] ✅ Redis connected
+23:18:00 [[32minfo[39m] 🚀 Server running on http://localhost:3000 [development]
+23:18:24 [[32minfo[39m] ✅ PostgreSQL connected
+23:18:25 [[32minfo[39m] ✅ Redis connected
+23:18:25 [[32minfo[39m] 🚀 Server running on http://localhost:3000 [development]
+23:18:31 [[32minfo[39m] HTTP request {"method":"GET","path":"/docs/","status":304,"duration_ms":11}
+23:18:31 [[32minfo[39m] HTTP request {"method":"GET","path":"/docs/swagger-ui.css","status":304,"duration_ms":15}
+23:18:31 [[32minfo[39m] HTTP request {"method":"GET","path":"/docs/swagger-ui-bundle.js","status":304,"duration_ms":4}
+23:18:31 [[32minfo[39m] HTTP request {"method":"GET","path":"/docs/swagger-ui-standalone-preset.js","status":304,"duration_ms":10}
+23:18:31 [[32minfo[39m] HTTP request {"method":"GET","path":"/docs/swagger-ui-init.js","status":200,"duration_ms":3}
+23:18:32 [[32minfo[39m] HTTP request {"method":"GET","path":"/docs/favicon-32x32.png","status":304,"duration_ms":2}
+23:19:17 [[32minfo[39m] HTTP request {"method":"GET","path":"/favicon.ico","status":404,"duration_ms":12}
+23:20:19 [[32minfo[39m] ✅ PostgreSQL connected
+23:20:20 [[32minfo[39m] ✅ Redis connected
+23:20:20 [[32minfo[39m] 🚀 Server running on http://localhost:5000 [development]
+23:21:34 [[32minfo[39m] HTTP request {"method":"GET","path":"/","status":404,"duration_ms":10}
+23:21:44 [[32minfo[39m] HTTP request {"method":"GET","path":"/","status":404,"duration_ms":3}
+23:23:21 [[31merror[39m] Unhandled error Cannot read properties of undefined (reading 'code') {"stack":"TypeError: Cannot read properties of undefined (reading 'code')\n    at AuthService.register (C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\src\\services\\auth\\auth.service.ts:26:13)\n    at AuthController.register (C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\src\\controllers\\auth.controller.ts:11:40)\n    at Layer.handleRequest (C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\express-rate-limit\\dist\\index.cjs:999:7\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\express-rate-limit\\dist\\index.cjs:854:5","path":"/api/v1/auth/register","method":"POST"}
+23:23:21 [[32minfo[39m] HTTP request {"method":"POST","path":"/api/v1/auth/register","status":500,"duration_ms":33}
+23:26:58 [[32minfo[39m] HTTP request {"method":"POST","path":"/api/v1/auth/register","status":201,"duration_ms":3172}
+23:27:49 [[32minfo[39m] HTTP request {"method":"POST","path":"/api/v1/auth/register","status":409,"duration_ms":807}
+23:31:09 [[31merror[39m] Unhandled error Expected double-quoted property name in JSON at position 73 (line 4 column 1) {"stack":"SyntaxError: Expected double-quoted property name in JSON at position 73 (line 4 column 1)\n    at JSON.parse (<anonymous>)\n    at parse (C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\body-parser\\lib\\types\\json.js:72:19)\n    at C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\body-parser\\lib\\read.js:162:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at invokeCallback (C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:508:28)\n    at IncomingMessage.emit (node:domain:489:12)\n    at endReadableNT (node:internal/streams/readable:1701:12)","path":"/api/v1/auth/login","method":"GET"}
+23:32:52 [[31merror[39m] Unhandled error Expected double-quoted property name in JSON at position 73 (line 4 column 1) {"stack":"SyntaxError: Expected double-quoted property name in JSON at position 73 (line 4 column 1)\n    at JSON.parse (<anonymous>)\n    at parse (C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\body-parser\\lib\\types\\json.js:72:19)\n    at C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\body-parser\\lib\\read.js:162:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at invokeCallback (C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:508:28)\n    at IncomingMessage.emit (node:domain:489:12)\n    at endReadableNT (node:internal/streams/readable:1701:12)","path":"/api/v1/auth/login","method":"POST"}
+23:32:55 [[31merror[39m] Unhandled error Expected double-quoted property name in JSON at position 73 (line 4 column 1) {"stack":"SyntaxError: Expected double-quoted property name in JSON at position 73 (line 4 column 1)\n    at JSON.parse (<anonymous>)\n    at parse (C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\body-parser\\lib\\types\\json.js:72:19)\n    at C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\body-parser\\lib\\read.js:162:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at invokeCallback (C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (C:\\Users\\USER\\Desktop\\wisdom\\vavar-realtors\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:508:28)\n    at IncomingMessage.emit (node:domain:489:12)\n    at endReadableNT (node:internal/streams/readable:1701:12)","path":"/api/v1/auth/login","method":"POST"}

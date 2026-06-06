@@ -17,6 +17,8 @@ export const env = {
   DB_PASSWORD: requireEnv("DB_PASSWORD"),
   DB_POOL_MIN: parseInt(process.env.DB_POOL_MIN || "2", 10),
   DB_POOL_MAX: parseInt(process.env.DB_POOL_MAX || "10", 10),
+  DATABASE_URL: requireEnv("DATABASE_URL"),
+  DIRECT_URL: requireEnv("DIRECT_URL"),
 
   REDIS_HOST: process.env.REDIS_HOST || "localhost",
   REDIS_PORT: parseInt(process.env.REDIS_PORT || "6379", 10),
@@ -46,4 +48,6 @@ export const env = {
 
   LOG_LEVEL: process.env.LOG_LEVEL || "info",
   LOG_FILE: process.env.LOG_FILE || "./logs/app.log",
+
+  REGISTRATION_CODE: requireEnv("REGISTRATION_CODE"),
 };

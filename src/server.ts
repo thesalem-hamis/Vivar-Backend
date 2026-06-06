@@ -1,6 +1,5 @@
-import "dotenv/config";
 import app from "./app";
-import { connectDatabase } from "./config/database";
+import { prisma } from "./config/database";
 import { connectRedis } from "./config/redis";
 import { logger } from "./config/logger";
 import { env } from "./config/env";
@@ -9,7 +8,7 @@ const PORT = env.PORT;
 
 async function bootstrap(): Promise<void> {
   try {
-    await connectDatabase();
+    await prisma.$connect();
     logger.info("✅ PostgreSQL connected");
 
     await connectRedis();
@@ -26,7 +25,8 @@ async function bootstrap(): Promise<void> {
   }
 }
 
-process.on("SIGTERM", () => {
+process.on("SIGTERM", async () => {
+  await prisma.$disconnect();
   logger.info("SIGTERM received — shutting down gracefully");
   process.exit(0);
 });
