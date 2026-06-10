@@ -30,14 +30,19 @@ export class PropertyService {
         type: data.type,
         priceNaira: data.priceNaira,
         priceUsd: data.priceUsd,
-        status: data.status || "active",
+        status: data.status || "FOR_SALE",
         bedrooms: data.bedrooms,
         bathrooms: data.bathrooms,
         floorAreaSqm: data.floorAreaSqm,
         description: data.description,
         amenities: data.amenities,
         is_furnished: data.is_furnished,
+        is_active: data.is_active,
+        is_featured: data.is_featured,
         address: { create: data.address },
+        views_count: data.views_count,
+        agent_id: data.agent_id,
+        agent: { create: data.agent },
       },
     });
 
@@ -93,7 +98,7 @@ export class PropertyService {
     if (cached) return cached;
 
     const properties = await prisma.property.findMany({
-      where: { is_featured: true, status: "active", is_active: true },
+      where: { is_featured: true, status: "FOR_SALE", is_active: true },
       orderBy: { createdAt: "desc" },
       take: limit,
       include: { address: true },

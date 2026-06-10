@@ -51,7 +51,6 @@ export class AuthService {
     const user = await prisma.user.findFirst({
       where: {
         email: email.toLowerCase(),
-        is_active: true,
       },
     });
 

@@ -14,7 +14,6 @@ router.get("/:id", propertyController.getById.bind(propertyController));
 router.post(
   "/",
   authenticate,
-  authorize("agent", "admin"),
   validateBody("createProperty"),
   propertyController.create.bind(propertyController),
 );
@@ -22,14 +21,12 @@ router.post(
 router.patch(
   "/:id",
   authenticate,
-  authorize("agent", "admin"),
   propertyController.update.bind(propertyController),
 );
 
 router.delete(
   "/:id",
   authenticate,
-  authorize("agent", "admin"),
   propertyController.delete.bind(propertyController),
 );
 

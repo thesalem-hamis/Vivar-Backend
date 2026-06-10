@@ -1,25 +1,19 @@
 import { Router } from "express";
 
 import authRoutes from "./auth.routes";
-import adminRoutes from "./admin.routes";
-import agentRoutes from "./agent.routes";
-import bookingRoutes from "./booking.routes";
 import propertyRoutes from "./property.routes";
-import reviewRoutes from "./review.routes";
-import searchRoutes from "./search.routes";
-import uploadRoutes from "./upload.routes";
-import userRoutes from "./user.routes";
+import projectRoutes from "./project.routes";
+import consultationRoutes from "./consultation.routes";
+import newsletterRoutes from "./newsletter.routes";
+import insightRoutes from "./insight.routes";
 
 const router = Router();
 
 router.use("/auth", authRoutes);
-router.use("/admin", adminRoutes);
-router.use("/agents", agentRoutes);
-router.use("/bookings", bookingRoutes);
 router.use("/properties", propertyRoutes);
-router.use("/reviews", reviewRoutes);
-router.use("/search", searchRoutes);
-router.use("/uploads", uploadRoutes);
-router.use("/users", userRoutes);
+router.use("/projects", projectRoutes);
+router.use("/consultations", consultationRoutes);
+router.use("/newsletter", newsletterRoutes);
+router.use("/insights", insightRoutes);
 
 export default router;

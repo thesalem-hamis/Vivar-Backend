@@ -25,7 +25,7 @@ model Property {
   type            String
   priceNaira      Decimal
   priceUsd        Decimal?
-  status          String   @default("active")
+  status          PropertyStatus  @default(FOR_SALE)
   bedrooms        Int?
   bathrooms       Int?
   floorAreaSqm    Float?
@@ -37,14 +37,28 @@ model Property {
   is_featured     Boolean  @default(false)
   address         PropertyAddress?
   views_count     Int      @default(0)
+  agent_id        String
+  agent           Agent     @relation("AgentListings", fields: [agent_id], references: [id])
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
 
+model Agent {
+  id            String   @id @default(uuid())
+  name          String
+  phone         String
+  properties    Property[] @relation("AgentListings")
+  projects      Project[]  @relation("AgentProjects")
+  photo         String
+  createdAt     DateTime @default(now())
+}
+
 model PropertyAddress {
-  id          String   @id @default(uuid())
-  property_id String   @unique
-  property    Property @relation(fields: [property_id], references: [id])
+  id          String    @id @default(uuid())
+  property_id String?   @unique
+  project_id  String?   @unique
+  property    Property? @relation(fields: [property_id], references: [id])
+  Project     Project?   @relation(fields: [project_id], references: [id])
   street      String
   city        String
   state       String
@@ -53,15 +67,21 @@ model PropertyAddress {
 }
 
 model Lead {
-  id            String   @id @default(uuid())
-  fullName      String
-  email         String
-  phone         String
-  leadType      String 
-  status        String   @default("NEW")
-  budgetRange   String?
-  timeline      String?
-  notes         String?
+  id               String   @id @default(uuid())
+  fullName         String
+  email            String   @unique
+  phone            String
+  leadType         String 
+  budgetRange      String?
+  timeline         String?
+  notes            String?
+  status           SubscriptionStatus @default(SUBSCRIBED)
+  subscribedAt     DateTime           @default(now())
+  unsubscribedAt   DateTime?
+  segment          String?
+  source           String? 
+  
+  @@index([email])
   createdAt     DateTime @default(now())
 }
 
@@ -74,4 +94,70 @@ model Insight {
   excerpt       String
   publishedAt   DateTime @default(now())
   targetKeyword String?
+}
+
+model Project {
+  id              String   @id @default(uuid())
+  title           String
+  developerName   String?
+  description     String
+  status          ProjectStatus @default(COMING_SOON)
+  priceFrom       Decimal
+  unitCount       Int?
+  bedroomRange    String?
+  completionDate  DateTime?
+  location        String
+  landmark        String?
+  isVetted        Boolean  @default(true)
+  isLegallyVetted Boolean  @default(true)
+  agent_id        String
+  agent           Agent     @relation("AgentProjects", fields: [agent_id], references: [id])
+  address         PropertyAddress?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Consultation {
+  id            String   @id @default(uuid())
+  fullName      String
+  email         String
+  phone         String
+  location      String
+  interestType  String
+  targetArea    String
+  budgetRange   String
+  timeline      String 
+  notes         String?
+  status        ConsultationStatus @default(NEW)
+  reviewedAt    DateTime?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+enum ConsultationStatus {
+  NEW
+  REVIEWED
+  CONTACTED
+  CONVERTED
+  ARCHIVED
+}
+
+enum SubscriptionStatus {
+  SUBSCRIBED
+  UNSUBSCRIBED
+  BOUNCED
+}
+
+enum ProjectStatus {
+  COMING_SOON
+  SELLING_NOW
+  UNDER_CONSTRUCTION
+  COMPLETED
+}
+
+enum PropertyStatus {
+  FOR_SALE
+  FOR_RENT
+  SOLD
 }

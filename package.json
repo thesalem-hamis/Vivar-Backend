@@ -30,7 +30,8 @@
     "redis": "^6.0.0",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^14.0.0",
-    "winston": "^3.19.0"
+    "winston": "^3.19.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
