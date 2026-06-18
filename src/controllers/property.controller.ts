@@ -1,66 +1,120 @@
-import { Request, Response, NextFunction } from "express";
-import { propertyService } from "../services/property/property.service";
+import { Request, Response } from "express";
+import { PropertyService } from "../services/property/property.service";
+import {
+  CreatePropertyDTO,
+  PropertySearchFilters,
+} from "../types/property.types";
 
 export class PropertyController {
-  async getById(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> {
+  static async create(req: Request, res: Response): Promise<Response> {
     try {
-      const id = req.params.id as string;
-      const property = await propertyService.getById(id);
-      propertyService
-        .incrementViews(id)
-        .catch((err) => console.error("View increment failed", err));
-      res.json({ success: true, data: property });
-    } catch (err) {
-      next(err);
+      const data = req.body as CreatePropertyDTO;
+
+      const property = await PropertyService.createProperty(data);
+
+      return res.status(201).json({
+        success: true,
+        message: "Property created successfully",
+        data: property,
+      });
+    } catch (error: any) {
+      console.error("Create Property Error:", error);
+      return res.status(500).json({
+        success: false,
+        message: error.message || "Failed to create property",
+      });
     }
   }
 
-  async getFeatured(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> {
+  static async getFeatured(req: Request, res: Response): Promise<Response> {
     try {
-      const limit = parseInt((req.query.limit as string) || "6", 10);
-      const data = await propertyService.getFeatured(limit);
-      res.json({ success: true, data });
-    } catch (err) {
-      next(err);
+      const featured = await PropertyService.getFeaturedProperties();
+      return res.status(200).json({ success: true, data: featured });
+    } catch (error: any) {
+      console.error("Fetch Featured Properties Error:", error);
+      return res
+        .status(500)
+        .json({
+          success: false,
+          message: "Failed to fetch featured properties",
+        });
     }
   }
 
-  async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async getById(req: Request, res: Response): Promise<Response> {
     try {
-      const property = await propertyService.create(req.body);
-      res.status(201).json({ success: true, data: property });
-    } catch (err) {
-      next(err);
+      const { id } = req.params;
+      const property = await PropertyService.getPropertyById(id as string);
+
+      return res.status(200).json({
+        success: true,
+        data: property,
+      });
+    } catch (error: any) {
+      if (error.message === "Property not found") {
+        return res
+          .status(404)
+          .json({ success: false, message: "Property not found" });
+      }
+      console.error("Fetch Property Error:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to fetch property details" });
     }
   }
 
-  async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async search(req: Request, res: Response): Promise<Response> {
     try {
-      const id = req.params.id as string;
-      const property = await propertyService.update(id, req.body);
-      res.json({ success: true, data: property });
-    } catch (err) {
-      next(err);
+      const filters = req.query as unknown as PropertySearchFilters;
+
+      const result = await PropertyService.searchProperties(filters);
+
+      return res.status(200).json({
+        success: true,
+        ...result,
+      });
+    } catch (error: any) {
+      console.error("Search Properties Error:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to search properties" });
     }
   }
 
-  async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async update(req: Request, res: Response): Promise<Response> {
     try {
-      const id = req.params.id as string;
-      await propertyService.delete(id);
-      res.json({ success: true, message: "Property deleted successfully" });
-    } catch (err) {
-      next(err);
+      const { id } = req.params;
+      const data = req.body as Partial<CreatePropertyDTO>;
+
+      const property = await PropertyService.updateProperty(id as string, data);
+
+      return res.status(200).json({
+        success: true,
+        message: "Property updated successfully",
+        data: property,
+      });
+    } catch (error: any) {
+      console.error("Update Property Error:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to update property" });
+    }
+  }
+
+  static async delete(req: Request, res: Response): Promise<Response> {
+    try {
+      const { id } = req.params;
+      await PropertyService.deleteProperty(id as string);
+
+      return res.status(200).json({
+        success: true,
+        message: "Property deleted successfully",
+      });
+    } catch (error: any) {
+      console.error("Delete Property Error:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to delete property" });
     }
   }
 }
-
-export const propertyController = new PropertyController();

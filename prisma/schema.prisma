@@ -19,46 +19,68 @@ model User {
 }
 
 model Property {
+  id               String   @id @default(uuid())
+  title            String
+  description      String?  @db.Text
+  propertyType     PropertyType
+  propertySubType  PropertySubType
+  pricing          PricingAndFees?
+  purpose          Purpose  @default(FOR_SALE)
+  bedrooms         Int?
+  bathrooms        Int?
+  floorAreaSqm     Decimal? @db.Decimal(10, 2)
+  isVerified       Boolean  @default(true)
+  amenities        Amenities?
+  furnishingStatus FurnishingStatus?
+  condition        Condition?
+  location         Location?
+  isActive         Boolean  @default(true)
+  isFeatured       Boolean  @default(false)
+  viewsCount       Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Amenities {
+  id              String        @id @default(uuid())
+  propertyId      String        @unique
+  isServiced      Boolean       @default(false)
+  hasBq           Boolean       @default(false)
+  powerSupply     PowerSupply?
+  amenityList     AmenityType[] 
+  property        Property      @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+}
+
+model PricingAndFees {
+  id                  String        @id @default(uuid())
+  propertyId          String        @unique
+  currency            Currency      @default(NGN)
+  price               Decimal       @db.Decimal(15, 2)
+  paymentPeriod       PaymentPeriod
+  serviceCharge       Decimal?      @default(0) @db.Decimal(12, 2)
+  agencyFeePercentage Decimal?      @default(0) @db.Decimal(5, 2)
+  legalFeePercentage  Decimal?      @default(0) @db.Decimal(5, 2)
+  cautionFee          Decimal?      @default(0) @db.Decimal(12, 2)
+  property            Property      @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+}
+
+model Location {
   id              String   @id @default(uuid())
-  title           String
-  location        String
-  type            String
-  priceNaira      Decimal
-  priceUsd        Decimal?
-  status          PropertyStatus  @default(FOR_SALE)
-  bedrooms        Int?
-  bathrooms       Int?
-  floorAreaSqm    Float?
-  description     String
-  isVerified      Boolean  @default(true)
-  amenities       String[]
-  is_furnished    Boolean  @default(false)
-  is_active       Boolean  @default(true)
-  is_featured     Boolean  @default(false)
-  address         PropertyAddress?
-  views_count     Int      @default(0)
-  agent_id        String
-  agent           Agent     @relation("AgentListings", fields: [agent_id], references: [id])
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  propertyId      String   @unique
+  state           String
+  lga             String
+  localityArea    String
+  estateName      String?
+  streetAddress   String?
+  latitude        Float?
+  longitude       Float?
+  property        Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 }
 
-model Agent {
-  id            String   @id @default(uuid())
-  name          String
-  phone         String
-  properties    Property[] @relation("AgentListings")
-  projects      Project[]  @relation("AgentProjects")
-  photo         String
-  createdAt     DateTime @default(now())
-}
-
-model PropertyAddress {
+model ProjectAddress {
   id          String    @id @default(uuid())
-  property_id String?   @unique
-  project_id  String?   @unique
-  property    Property? @relation(fields: [property_id], references: [id])
-  Project     Project?   @relation(fields: [project_id], references: [id])
+  project_id  String   @unique
+  Project     Project   @relation(fields: [project_id], references: [id])
   street      String
   city        String
   state       String
@@ -110,9 +132,7 @@ model Project {
   landmark        String?
   isVetted        Boolean  @default(true)
   isLegallyVetted Boolean  @default(true)
-  agent_id        String
-  agent           Agent     @relation("AgentProjects", fields: [agent_id], references: [id])
-  address         PropertyAddress?
+  address         ProjectAddress?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
@@ -156,8 +176,90 @@ enum ProjectStatus {
   COMPLETED
 }
 
-enum PropertyStatus {
-  FOR_SALE
+enum Purpose {
   FOR_RENT
-  SOLD
+  FOR_SALE
+  SHORT_LET
+  JOINT_VENTURE
+}
+
+enum PropertyType {
+  HOUSE
+  FLAT_APARTMENT
+  COMMERCIAL
+  LAND
+  EVENT_CENTRE
+}
+
+enum PropertySubType {
+  // Houses
+  DETACHED_DUPLEX
+  SEMI_DETACHED_DUPLEX
+  TERRACED_DUPLEX
+  BUNGALOW
+  MANSION
+  // Flats
+  MINI_FLAT
+  SELF_CONTAIN
+  PENTHOUSE
+  MAISONETTE
+  STUDIO
+  // Commercial
+  OFFICE_SPACE
+  SHOP
+  WAREHOUSE
+  PLAZA
+  FILLING_STATION
+}
+
+enum Currency {
+  NGN
+  USD
+}
+
+enum PaymentPeriod {
+  PER_ANNUM
+  PER_MONTH
+  PER_NIGHT
+  OUTRIGHT
+}
+
+enum LandTitle {
+  C_OF_O
+  GOVERNORS_CONSENT
+  DEED_OF_ASSIGNMENT
+  EXCISION
+  GAZETTE
+  FAMILY_RECEIPT
+  FREEHOLD
+}
+
+enum FurnishingStatus {
+  FURNISHED
+  SEMI_FURNISHED
+  UNFURNISHED
+}
+
+enum Condition {
+  BRAND_NEW
+  NEWLY_BUILT
+  RENOVATED
+  FAIR_CONDITION
+}
+
+enum PowerSupply {
+  TWENTY_FOUR_HOURS
+  TWELVE_HOURS
+  SOLAR_INVERTER
+  PUBLIC_POWER_ONLY
+}
+
+enum AmenityType {
+  WATER_TREATMENT_PLANT
+  SWIMMING_POOL
+  GATED_ESTATE
+  UNIFORMED_SECURITY
+  FITTED_KITCHEN
+  CCTV
+  AMPLE_PARKING
 }

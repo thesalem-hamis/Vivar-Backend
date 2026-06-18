@@ -1,112 +1,273 @@
+import { Prisma } from "../../generated/prisma";
+import { createClient } from "redis";
+import {
+  CreatePropertyDTO,
+  PropertySearchFilters,
+} from "../../types/property.types";
 import { prisma } from "../../config/database";
-import { getCache, setCache, deleteCache } from "../../config/redis";
-import { AppError } from "../../utils/AppError";
-import { logger } from "../../config/logger";
 
-const CACHE_PREFIX = "cache:property";
+const redisClient = createClient({
+  url: process.env.REDIS_URL || "redis://localhost:6379",
+});
+
+redisClient.connect().catch(console.error);
+
+const generateCacheKey = (filters: Record<string, any>): string => {
+  const cleanFilters = Object.fromEntries(
+    Object.entries(filters).filter(([_, v]) => v != null && v !== ""),
+  );
+  const sortedKeys = Object.keys(cleanFilters).sort();
+  const queryString = sortedKeys
+    .map((key) => `${key}=${cleanFilters[key]}`)
+    .join("&");
+  return `search:properties:${queryString || "all"}`;
+};
+
+const invalidateCaches = async () => {
+  try {
+    await redisClient.del("search:properties:all");
+    await redisClient.del("properties:featured");
+  } catch (e) {
+    console.error("Redis Cache Deletion Error:", e);
+  }
+};
 
 export class PropertyService {
-  async getById(id: string) {
-    const cacheKey = `${CACHE_PREFIX}:${id}`;
-    const cached = await getCache(cacheKey);
-    if (cached) return cached;
-
-    const property = await prisma.property.findUnique({
-      where: { id, is_active: true },
-      include: { address: true },
-    });
-
-    if (!property) throw new AppError("Property not found", 404);
-
-    await setCache(cacheKey, property);
-    return property;
-  }
-
-  async create(data: any) {
+  static async createProperty(data: CreatePropertyDTO) {
     const property = await prisma.property.create({
       data: {
         title: data.title,
-        location: data.location,
-        type: data.type,
-        priceNaira: data.priceNaira,
-        priceUsd: data.priceUsd,
-        status: data.status || "FOR_SALE",
+        description: data.description,
+        propertyType: data.propertyType,
+        propertySubType: data.propertySubType,
+        purpose: data.purpose,
         bedrooms: data.bedrooms,
         bathrooms: data.bathrooms,
         floorAreaSqm: data.floorAreaSqm,
-        description: data.description,
-        amenities: data.amenities,
-        is_furnished: data.is_furnished,
-        is_active: data.is_active,
-        is_featured: data.is_featured,
-        address: { create: data.address },
-        views_count: data.views_count,
-        agent_id: data.agent_id,
-        agent: { create: data.agent },
+        furnishingStatus: data.furnishingStatus,
+        condition: data.condition,
+        isActive: data.isActive ?? true,
+
+        location: {
+          create: data.location,
+        },
+        pricing: {
+          create: data.pricing,
+        },
+        amenities: {
+          create: data.amenities,
+        },
+      },
+      include: {
+        location: true,
+        pricing: true,
+        amenities: true,
       },
     });
 
-    logger.info("Property created", { propertyId: property.id });
+    try {
+      await redisClient.del("search:properties:all");
+    } catch (e) {
+      console.error("Redis Cache Deletion Error:", e);
+    }
+
     return property;
   }
 
-  async update(id: string, data: any) {
-    const property = await prisma.property.findUnique({
-      where: { id },
+  static async getFeaturedProperties() {
+    const cacheKey = "properties:featured";
+
+    try {
+      const cachedResult = await redisClient.get(cacheKey);
+      if (cachedResult) {
+        console.log("Cache HIT for Featured Properties");
+        return JSON.parse(cachedResult);
+      }
+    } catch (error) {
+      console.error("Redis Get Error:", error);
+    }
+
+    const featuredProperties = await prisma.property.findMany({
+      where: {
+        isFeatured: true,
+        isActive: true,
+        isVerified: true,
+      },
+      include: { location: true, pricing: true, amenities: true },
+      orderBy: { createdAt: "desc" },
+      take: 10,
     });
 
-    if (!property) throw new AppError("Property not found", 404);
+    try {
+      await redisClient.set(cacheKey, JSON.stringify(featuredProperties), {
+        EX: 3600,
+      });
+    } catch (error) {
+      console.error("Redis Set Error:", error);
+    }
 
-    const updated = await prisma.property.update({
+    return featuredProperties;
+  }
+
+  static async getPropertyById(id: string) {
+    const property = await prisma.property.update({
       where: { id },
       data: {
-        title: data.title ?? property.title,
-        description: data.description ?? property.description,
-        priceNaira: data.priceNaira ?? property.priceNaira,
-        status: data.status ?? property.status,
-        amenities: data.amenities ?? property.amenities,
-        updatedAt: new Date(),
+        viewsCount: { increment: 1 },
+      },
+      include: {
+        location: true,
+        pricing: true,
+        amenities: true,
       },
     });
 
-    await deleteCache(`${CACHE_PREFIX}:${id}`);
-    return updated;
+    if (!property) throw new Error("Property not found");
+    return property;
   }
 
-  async delete(id: string) {
+  static async searchProperties(filters: PropertySearchFilters = {}) {
+    const cacheKey = generateCacheKey(filters);
+
     try {
-      await prisma.property.update({
-        where: { id },
-        data: { is_active: false },
-      });
-      await deleteCache(`${CACHE_PREFIX}:${id}`);
-    } catch {
-      throw new AppError("Property not found", 404);
+      const cachedResult = await redisClient.get(cacheKey);
+      if (cachedResult) return JSON.parse(cachedResult);
+    } catch (redisError) {
+      console.error("Redis Get Error:", redisError);
     }
+
+    const where: Prisma.PropertyWhereInput = {
+      isActive: true,
+      isVerified: true,
+    };
+
+    if (filters.searchQuery) {
+      where.OR = [
+        { title: { contains: filters.searchQuery, mode: "insensitive" } },
+        { description: { contains: filters.searchQuery, mode: "insensitive" } },
+        {
+          location: {
+            is: {
+              estateName: {
+                contains: filters.searchQuery,
+                mode: "insensitive",
+              },
+            },
+          },
+        },
+      ];
+    }
+
+    if (filters.purpose) where.purpose = filters.purpose;
+    if (filters.propertyType) where.propertyType = filters.propertyType;
+    if (filters.propertySubType)
+      where.propertySubType = filters.propertySubType;
+    if (filters.bedrooms) where.bedrooms = { gte: Number(filters.bedrooms) };
+
+    if (filters.state || filters.localityArea) {
+      where.location = {
+        ...(filters.state && {
+          state: { equals: filters.state, mode: "insensitive" },
+        }),
+        ...(filters.localityArea && {
+          localityArea: { contains: filters.localityArea, mode: "insensitive" },
+        }),
+      };
+    }
+
+    if (filters.minPrice || filters.maxPrice) {
+      where.pricing = {
+        price: {
+          ...(filters.minPrice && { gte: Number(filters.minPrice) }),
+          ...(filters.maxPrice && { lte: Number(filters.maxPrice) }),
+        },
+      };
+    }
+
+    if (filters.isServiced !== undefined || filters.hasBq !== undefined) {
+      where.amenities = {
+        ...(filters.isServiced !== undefined && {
+          isServiced: String(filters.isServiced) === "true",
+        }),
+        ...(filters.hasBq !== undefined && {
+          hasBq: String(filters.hasBq) === "true",
+        }),
+      };
+    }
+
+    const page = Number(filters.page || 1);
+    const limit = Number(filters.limit || 20);
+    const skip = (page - 1) * limit;
+
+    const [properties, totalCount] = await Promise.all([
+      prisma.property.findMany({
+        where,
+        include: { location: true, pricing: true, amenities: true },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.property.count({ where }),
+    ]);
+
+    const result = {
+      data: properties,
+      meta: {
+        total: totalCount,
+        page,
+        limit,
+        totalPages: Math.ceil(totalCount / limit),
+      },
+    };
+
+    try {
+      await redisClient.set(cacheKey, JSON.stringify(result), { EX: 300 });
+    } catch (redisError) {
+      console.error("Redis Set Error:", redisError);
+    }
+
+    return result;
   }
 
-  async incrementViews(id: string) {
-    await prisma.property.update({
+  static async updateProperty(
+    id: string,
+    data: Partial<CreatePropertyDTO> & { isFeatured?: boolean },
+  ) {
+    const updateData: Prisma.PropertyUpdateInput = {
+      title: data.title,
+      description: data.description,
+      propertyType: data.propertyType,
+      propertySubType: data.propertySubType,
+      purpose: data.purpose,
+      bedrooms: data.bedrooms,
+      bathrooms: data.bathrooms,
+      floorAreaSqm: data.floorAreaSqm,
+      furnishingStatus: data.furnishingStatus,
+      condition: data.condition,
+      isActive: data.isActive,
+      isFeatured: data.isFeatured,
+    };
+
+    if (data.location) updateData.location = { update: data.location };
+    if (data.pricing) updateData.pricing = { update: data.pricing };
+    if (data.amenities) updateData.amenities = { update: data.amenities };
+
+    const property = await prisma.property.update({
       where: { id },
-      data: { views_count: { increment: 1 } },
+      data: updateData,
+      include: { location: true, pricing: true, amenities: true },
     });
+
+    await invalidateCaches();
+    return property;
   }
 
-  async getFeatured(limit = 6) {
-    const cacheKey = "cache:properties:featured";
-    const cached = await getCache(cacheKey);
-    if (cached) return cached;
-
-    const properties = await prisma.property.findMany({
-      where: { is_featured: true, status: "FOR_SALE", is_active: true },
-      orderBy: { createdAt: "desc" },
-      take: limit,
-      include: { address: true },
+  static async deleteProperty(id: string) {
+    const property = await prisma.property.delete({
+      where: { id },
     });
 
-    await setCache(cacheKey, properties, 1800);
-    return properties;
+    await invalidateCaches();
+    return property;
   }
 }
-
-export const propertyService = new PropertyService();

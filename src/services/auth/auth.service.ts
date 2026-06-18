@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { prisma } from "../../config/database"; // Import your Prisma singleton
+import { prisma } from "../../config/database";
 import { redisClient } from "../../config/redis";
 import { env } from "../../config/env";
 import { JwtPayload, UserRole } from "../../types";
