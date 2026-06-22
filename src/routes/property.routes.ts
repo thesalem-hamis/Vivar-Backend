@@ -1,33 +1,14 @@
 import { Router } from "express";
-import { propertyController } from "../controllers/property.controller";
-import { authenticate, authorize } from "../middleware/authenticate";
-import { validateBody } from "../validators/property.validator";
+import { PropertyController } from "../controllers/property.controller";
+import { authenticate } from "../middleware/authenticate";
 
 const router = Router();
+router.get("/search", PropertyController.search);
+router.get("/featured", PropertyController.getFeatured);
+router.get("/:id", PropertyController.getById);
 
-router.get(
-  "/featured",
-  propertyController.getFeatured.bind(propertyController),
-);
-router.get("/:id", propertyController.getById.bind(propertyController));
-
-router.post(
-  "/",
-  authenticate,
-  validateBody("createProperty"),
-  propertyController.create.bind(propertyController),
-);
-
-router.patch(
-  "/:id",
-  authenticate,
-  propertyController.update.bind(propertyController),
-);
-
-router.delete(
-  "/:id",
-  authenticate,
-  propertyController.delete.bind(propertyController),
-);
+router.post("/", authenticate, PropertyController.create);
+router.put("/:id", authenticate, PropertyController.update);
+router.delete("/:id", authenticate, PropertyController.delete);
 
 export default router;

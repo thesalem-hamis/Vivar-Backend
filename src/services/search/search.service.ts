@@ -68,7 +68,7 @@ export class SearchService {
         orderBy: orderByMap[sort_by] || { createdAt: "desc" },
         skip,
         take: limit,
-        include: { address: true },
+        include: { location: true },
       }),
       prisma.property.count({ where }),
     ]);

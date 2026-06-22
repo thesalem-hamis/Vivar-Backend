@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { prisma } from "../../config/database"; // Import your Prisma singleton
+import { prisma } from "../../config/database";
 import { redisClient } from "../../config/redis";
 import { env } from "../../config/env";
 import { JwtPayload, UserRole } from "../../types";
@@ -19,6 +19,17 @@ interface RegisterDto {
   password: string;
   name: string;
   code: string;
+}
+
+interface UserProfile {
+  id: string;
+  email: string;
+  password_hash: string;
+  name: string | null;
+  googleId: string;
+  avatarUrl: string | null;
+  lastLogin: Date;
+  createdAt: Date;
 }
 
 export class AuthService {
@@ -63,6 +74,23 @@ export class AuthService {
     }
 
     return this.issueTokens(user);
+  }
+
+  async getProfile(userId?: string): Promise<UserProfile> {
+    if (!userId) {
+      throw new AppError("Not Authenticataced", 401);
+    }
+    const user = await prisma.user.findFirst({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      throw new AppError("User not found", 401);
+    }
+
+    return user;
   }
 
   async refresh(refreshToken: string): Promise<AuthTokens> {

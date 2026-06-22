@@ -16,6 +16,7 @@ router.post(
   authController.login.bind(authController),
 );
 router.post("/refresh", authController.refresh.bind(authController));
+router.get("/me", authenticate, authController.getProfile.bind(authController));
 router.post(
   "/logout",
   authenticate,
