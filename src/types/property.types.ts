@@ -8,7 +8,7 @@ import {
   PaymentPeriod,
   PowerSupply,
   AmenityType,
-} from "../generated/prisma";
+} from "@prisma/client";
 
 export interface CreatePropertyDTO {
   title: string;

@@ -9,7 +9,7 @@ import {
   PaymentPeriod,
   PowerSupply,
   AmenityType,
-} from "../generated/prisma";
+} from "@prisma/client";
 
 const locationSchema = z.object({
   state: z.string({ error: "State is required" }),

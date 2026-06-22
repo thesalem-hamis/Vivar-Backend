@@ -7,16 +7,24 @@ import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 import { readFileSync } from "fs";
 import { join } from "path";
-import apiRoutes from "../src/routes/index";
-import { rateLimiter } from "../src/middleware/rateLimiter";
-import { errorHandler } from "../src/middleware/errorHandler";
-import { notFound } from "../src/middleware/notFound";
-import { requestLogger } from "../src/middleware/requestLogger";
+import apiRoutes from "./routes/index";
+import { rateLimiter } from "./middleware/rateLimiter";
+import { errorHandler } from "./middleware/errorHandler";
+import { notFound } from "./middleware/notFound";
+import { requestLogger } from "./middleware/requestLogger";
 
 const app: Application = express();
 
 app.use(helmet());
-app.use(cors({ origin: process.env.CORS_ORIGIN || "*" }));
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+  }),
+);
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 

@@ -18,8 +18,34 @@ export class AuthController {
   async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, password } = req.body;
-      const tokens = await authService.login(email, password);
-      res.json({ success: true, data: tokens });
+      const { access_token, refresh_token, expires_in } =
+        await authService.login(email, password);
+      res.cookie("refreshToken", refresh_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      });
+      res.json({
+        success: true,
+        data: {
+          access_token,
+          expires_in,
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getProfile(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const profile = await authService.getProfile(req.user?.sub);
+      res.json({ success: true, data: profile });
     } catch (err) {
       next(err);
     }
